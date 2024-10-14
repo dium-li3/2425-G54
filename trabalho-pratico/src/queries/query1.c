@@ -46,6 +46,7 @@ void execute_query1(int numlinha, char *arg, USERS_CATALOG users)
     char *country = getCountry(user);
 
     fprintf(ficheiro, "%s;%s;%s;%d;%s", email, first_name, last_name, age, country);
+    fprintf(ficheiro, "\n");
 
     free(email);
     free(first_name);
