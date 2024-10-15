@@ -47,13 +47,16 @@ void execute_query2(int numlinha, char *arg, STATS *stats)
     
     g_array_sort(list_artists, sort_DiscographyTime);
 
+    if (list_artists->len == 0){
+        fprintf(ficheiro,"\n");
+    }
+
     if (strcmp(country,"") == 0)
     {
         for (int i = 0; i < number; i++)
         {
             ARTIST artist = g_array_index(list_artists, ARTIST, i);
-            fprintf(ficheiro, "%s;%s;%s;%s",getArtistName(artist),getArtistType(artist),convert_seconds_to_duration(getDiscographyDuration(artist)),getArtistCountry(artist));
-            fprintf(ficheiro, "\n");
+            fprintf(ficheiro, "%s;%s;%s;%s\n",getArtistName(artist),getArtistType(artist),convert_seconds_to_duration(getDiscographyDuration(artist)),getArtistCountry(artist));
         }
     }
     else
@@ -64,8 +67,7 @@ void execute_query2(int numlinha, char *arg, STATS *stats)
         {
             ARTIST artist = g_array_index(list_artists, ARTIST, i);
             if(strcmp(getArtistCountry(artist),country)==0){
-                fprintf(ficheiro, "%s;%s;%s;%s",getArtistName(artist),getArtistType(artist),convert_seconds_to_duration(getDiscographyDuration(artist)),getArtistCountry(artist));
-                fprintf(ficheiro, "\n");
+                fprintf(ficheiro, "%s;%s;%s;%s\n",getArtistName(artist),getArtistType(artist),convert_seconds_to_duration(getDiscographyDuration(artist)),getArtistCountry(artist));
                 count_artists++;
             }
             if (count_artists>=number) break;

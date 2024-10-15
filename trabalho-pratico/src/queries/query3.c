@@ -82,11 +82,14 @@ void execute_query3(int numlinha, char *arg, STATS *stats)
 
     g_array_sort(generos_musicais_array, sort_GeneroMusical);
 
+    if (generos_musicais_array->len == 0) {
+        fprintf(ficheiro,"\n");
+    }
+
     for (int i = 0; i < generos_musicais_array->len; i++)
         {
             GENERO_MUSICAL genero = g_array_index(generos_musicais_array, GENERO_MUSICAL, i);
-            fprintf(ficheiro, "%s;%d",getGeneroNome(genero),getGeneroLikes(genero));
-            fprintf(ficheiro, "\n");
+            fprintf(ficheiro, "%s;%d\n",getGeneroNome(genero),getGeneroLikes(genero));
         }
 
     fclose(ficheiro);  
