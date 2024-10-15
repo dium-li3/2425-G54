@@ -47,7 +47,7 @@ void execute_query2(int numlinha, char *arg, STATS *stats)
     
     g_array_sort(list_artists, sort_DiscographyTime);
 
-    if (list_artists->len == 0){
+    if (list_artists->len == 0 || number == 0){
         fprintf(ficheiro,"\n");
     }
 
