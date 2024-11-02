@@ -42,7 +42,8 @@ void execute_query1(int numlinha, char *arg, USERS_CATALOG users)
     char *email = getEmail(user);
     char *first_name = getFirstName(user);
     char *last_name = getLastName(user);
-    int age = calculate_age(getBirthDate(user));
+    char *birth = getBirthDate(user);
+    int age = calculate_age(birth);
     char *country = getCountry(user);
 
     fprintf(ficheiro, "%s;%s;%s;%d;%s\n", email, first_name, last_name, age, country);
@@ -50,6 +51,7 @@ void execute_query1(int numlinha, char *arg, USERS_CATALOG users)
     free(email);
     free(first_name);
     free(last_name);
+    free(birth);
     free(country);
 
     }

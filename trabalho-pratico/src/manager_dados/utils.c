@@ -130,11 +130,14 @@ gint sort_DiscographyTime(gconstpointer a, gconstpointer b) {
     char *artist_a_ID = getArtistId(artist_a);
     char *artist_b_ID = getArtistId(artist_b);
 
-    if (duration_b != duration_a) {
-        return duration_b - duration_a;
-    }
+    int result = strcmp(artist_a_ID, artist_b_ID);
 
-    return strcmp(artist_a_ID, artist_b_ID);
+    free(artist_a_ID);
+    free(artist_b_ID);
+
+    if (duration_b != duration_a) return duration_b - duration_a;
+
+    return result;
 }
 
 void update_DiscographyTime(ARTISTS_CATALOG catalogo_artists, char *artist_ids, char *duration_to_add) {
@@ -172,12 +175,14 @@ gint sort_GeneroMusical(gconstpointer a, gconstpointer b) {
     char *genero_a_nome = getGeneroNome(genero_a);
     char *genero_b_nome = getGeneroNome(genero_b);
 
+    int result = g_ascii_strcasecmp(genero_a_nome, genero_b_nome);
 
-    if (genero_a_likes != genero_b_likes) {
-        return genero_b_likes - genero_a_likes; 
-    }
+    free(genero_a_nome);
+    free(genero_b_nome);
 
-    return g_ascii_strcasecmp(genero_a_nome, genero_b_nome);
+    if (genero_a_likes != genero_b_likes) return genero_b_likes - genero_a_likes; 
+
+    return result;
 }
 
 void increment_likes_for_genre(STATS *stats, int user_age, char *genre) {
@@ -202,25 +207,35 @@ void increment_likes_for_genre(STATS *stats, int user_age, char *genre) {
 }
 
 void update_statistics_for_genre(STATS *stats, MUSICS_CATALOG catalogo_musics, USER user) {
-    if (!getLikedMusics(user) || strlen(getLikedMusics(user)) == 0) {
+
+    char *liked_musics = getLikedMusics(user);
+
+    if (!liked_musics || strlen(liked_musics) == 0) {
         return;
     }
-    
-    char *liked_musics = getLikedMusics(user);
+
+    char *birth = getBirthDate(user);
+    int age = calculate_age(birth);
+
     format_string(liked_musics);
+    GString *copy_of_line = g_string_new(liked_musics);
+    gchar **tokens = g_strsplit(copy_of_line->str, ",", -1);
 
-    char *music_id = strtok(liked_musics, ",");
+    for (int i = 0; tokens[i] != NULL; i++)
+    {
+        MUSIC music = get_music_by_key(catalogo_musics, tokens[i]);
+        char *musicGenre = getGenre(music);
 
-    int age = calculate_age(getBirthDate(user));
-
-    while (music_id != NULL) {
-        MUSIC music = get_music_by_key(catalogo_musics, music_id);
-
-        if (music && getGenre(music)) {
-            increment_likes_for_genre(stats, age, getGenre(music));
+        if (music && musicGenre) {
+            increment_likes_for_genre(stats, age, musicGenre);
         }
-        music_id = strtok(NULL, ",");
+
+        free(musicGenre);
     }
 
+    g_string_free(copy_of_line, TRUE);
+    g_strfreev(tokens);
+
+    free(birth);
     free(liked_musics);
 }

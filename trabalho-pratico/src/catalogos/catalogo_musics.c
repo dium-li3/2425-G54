@@ -41,17 +41,9 @@ void inserir_musica_catalogo(GArray *parameters_array, MUSICS_CATALOG catalogo_m
     setYear(music,atoi(year));
     setLyrics(music,lyrics);
 
-    insert_music(catalogo_musics, music, getId(music));
+    insert_music(catalogo_musics, music, id);
 
-    update_DiscographyTime(catalogo_artists, getArtistIds(music), getDuration(music));
-
-    //free(id);
-    //free(title);
-    //free(artist_ids);
-    //free(duration);
-    //free(genre);
-    //free(year);
-    //free(lyrics);
+    update_DiscographyTime(catalogo_artists, artist_ids, duration);
 }
 
 // GHashTable Help Functions /////////////////////////////////////////
@@ -75,4 +67,5 @@ void update_music(MUSICS_CATALOG catalogo, char *key, MUSIC music)
 void free_musics_catalog(MUSICS_CATALOG catalogo) 
 {
   g_hash_table_destroy(catalogo->musics);
+  free(catalogo);
 }

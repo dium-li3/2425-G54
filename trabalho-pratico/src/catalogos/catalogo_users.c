@@ -43,7 +43,7 @@ void inserir_user_catalogo(GArray *parameters_array, USERS_CATALOG catalogo_user
     setSubscriptionType(user, subscription_type);
     setLikedMusics(user, liked_musics);
 
-    insert_user(catalogo_users, user, getUsername(user));
+    insert_user(catalogo_users, user, username);
 
     update_statistics_for_genre(stats,catalogo_musics,user);
 }
@@ -69,4 +69,5 @@ void update_user(USERS_CATALOG catalogo, char *key, USER user)
 void free_user_catalog(USERS_CATALOG catalogo) 
 {
   g_hash_table_destroy(catalogo->users);
+  free(catalogo);
 }

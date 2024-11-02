@@ -116,6 +116,7 @@ void destroi_artists(gpointer data) {
     free(artist->id);
     free(artist->name);
     free(artist->description);
+    free(artist->recipe_per_stream);
     free(artist->id_constituent);
     free(artist->country);
     free(artist->type);

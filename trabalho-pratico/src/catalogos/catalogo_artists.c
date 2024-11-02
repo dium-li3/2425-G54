@@ -43,7 +43,7 @@ void inserir_artist_catalogo(GArray *parameters_array, ARTISTS_CATALOG catalogo_
     setArtistCountry(artist, country);
     setArtistType(artist, type);
 
-    insert_artist(catalogo_artists, artist, getArtistId(artist));
+    insert_artist(catalogo_artists, artist, id);
 
     add_artist_to_stats(stats,artist);
 }
@@ -69,4 +69,5 @@ void update_artist(ARTISTS_CATALOG catalogo, char *key, ARTIST artist)
 void free_artists_catalog(ARTISTS_CATALOG catalogo) 
 {
   g_hash_table_destroy(catalogo->artists);
+  free(catalogo);
 }

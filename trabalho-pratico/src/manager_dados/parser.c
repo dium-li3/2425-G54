@@ -99,30 +99,26 @@ void parser(ARTISTS_CATALOG artists, MUSICS_CATALOG musics, USERS_CATALOG users,
 
         while (getline(&line, &len, info_file) != -1) 
         {
-            char *copy_of_line = strdup(line);
+            GString *copy_of_line = g_string_new(line);
 
             GArray *parameters_array = g_array_new(FALSE, FALSE, sizeof(char *));
 
-            char *token;
-
-            while ((token = strsep(&copy_of_line, ";")) != NULL) {
-                char *token_copy = strdup(token); 
+            gchar **tokens = g_strsplit(copy_of_line->str, ";", -1);
+            for (int i = 0; tokens[i] != NULL; i++)
+            {
+                char *token_copy = tokens[i];
                 removeQuotes(token_copy);
                 remove_newline(token_copy);
                 g_array_append_val(parameters_array, token_copy);
             }
+            g_string_free(copy_of_line, TRUE);
 
             if (valid_entity(i,parameters_array,artists,musics) == 1) insert_catalogo(i,parameters_array,artists,musics,users,stats);
             else fprintf(file_errors, "%s", line);
 
-            for (guint j = 0; j < parameters_array->len; j++) {
-                char *param = g_array_index(parameters_array, char *, j);
-                free(param);
-            }
-
+            g_strfreev(tokens);
+            
             g_array_free(parameters_array, TRUE);
-
-            free(copy_of_line);
         }
       
         free(line);
