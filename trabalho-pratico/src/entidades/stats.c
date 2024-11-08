@@ -62,26 +62,22 @@ void print_genre_age_table(STATS *stats) {
     GHashTableIter genre_iter;
     gpointer genre_key, age_table_value;
 
-    // Initialize the iterator for the outer hash table (genre -> age_table)
     g_hash_table_iter_init(&genre_iter, genre_age_table);
 
-    // Loop through each genre -> age_table entry
     while (g_hash_table_iter_next(&genre_iter, &genre_key, &age_table_value)) {
-        char *genre = (char *)genre_key; // Genre key
-        GHashTable *age_table = (GHashTable *)age_table_value; // Age table value
+        char *genre = (char *)genre_key;
+        GHashTable *age_table = (GHashTable *)age_table_value;
 
         printf("Genre: %s\n", genre);
 
-        // Now, iterate through the age table for each genre
         GHashTableIter age_iter;
         gpointer age_key, likes_value;
 
         g_hash_table_iter_init(&age_iter, age_table);
 
-        // Loop through each age -> likes entry for the current genre
         while (g_hash_table_iter_next(&age_iter, &age_key, &likes_value)) {
-            int age = *(int *)age_key; // Age key
-            int likes = *(int *)likes_value; // Likes value
+            int age = *(int *)age_key; 
+            int likes = *(int *)likes_value; 
 
             printf("   Age: %d, Likes: %d\n", age, likes);
         }
