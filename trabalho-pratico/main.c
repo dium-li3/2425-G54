@@ -22,7 +22,7 @@
 
 int main(int argc, char **argv)
 {
-    /*
+    
        if (argc==1) {}//exec_interactive_mode(argv[1]);
        else
        {
@@ -33,8 +33,8 @@ int main(int argc, char **argv)
                return 1;
            }
        }
-    */
-
+    
+    /*
     
     struct rusage r_usage;
     
@@ -46,9 +46,10 @@ int main(int argc, char **argv)
     getrusage(RUSAGE_SELF, &r_usage);
     printf("Memory usage: %ld KB\n", r_usage.ru_maxrss);
     
-
+    */
 
     return 0;
 
+    
     
 }
