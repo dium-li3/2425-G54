@@ -44,7 +44,7 @@ void exec_line(ARTISTS_CATALOG artists, MUSICS_CATALOG musics, USERS_CATALOG use
         {
             execute_query2(count, args, stats);
         }
-        else if(strcmp(query, "3") == 0)
+        if(strcmp(query, "3") == 0)
         {
             execute_query3(count, args, stats);
         }
