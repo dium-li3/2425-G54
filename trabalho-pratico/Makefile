@@ -1,32 +1,54 @@
+# Compiler and flags
 CC = gcc
-CFLAGS = -O2 -Wall `pkg-config --cflags --libs glib-2.0` 
+CFLAGS = -Wall `pkg-config --cflags --libs glib-2.0` -I./include
 
-BIN_DIR = bin
-BLD_DIR = build
-INC_DIR = include
+# Directory for source files
 SRC_DIR = src
 
-SRC = $(wildcard $(SRC_DIR)/**/*c) main.c
-OBJS = $(patsubst $(SRC_DIR)/%.c,$(BLD_DIR)/%.o,$(SRC))
+# Main program source files
+MAIN_SRC = main.c
+MAIN_SRC += $(wildcard src/catalogos/*.c)
+MAIN_SRC += $(wildcard src/entidades/*.c)
+MAIN_SRC += $(wildcard src/manager_dados/*.c)
+MAIN_SRC += $(wildcard src/modos_execucao/*.c)
+MAIN_SRC += $(wildcard src/queries/*.c)
 
-PROGRAM = programa-principal
+# Test source files
+TEST_SRC = $(wildcard src/testes/*.c)
+TEST_SRC = $(wildcard src/**/*.c)
 
-.DEFAULT_GOAL = build
+# Object files for the main program and tests
+MAIN_OBJ = $(MAIN_SRC:.c=.o)
+TEST_OBJ = $(TEST_SRC:.c=.o)
 
-build: setup $(PROGRAM) 
+# Executable names
+MAIN_EXEC = programa-principal
+TEST_EXEC = programa-testes
 
-$(PROGRAM): $(OBJS)
-	$(CC) -I $(INC_DIR) -o $@ $^ $(CFLAGS)
+# Results directory
+RESULTS_DIR = resultados
 
-$(BLD_DIR)/%.o: $(SRC_DIR)/%.c
-	@mkdir -p $(@D)
-	$(CC) -c -I $(INC_DIR) -o $@ $^ $(CFLAGS)
+# Default target: compile both the main program and the test program
+all: $(MAIN_EXEC) $(TEST_EXEC) $(RESULTS_DIR)
 
-.PHONY: setup
-setup:
-	@mkdir -p $(BLD_DIR)
+# Compile the main program
+$(MAIN_EXEC): $(MAIN_OBJ)
+	$(CC) $^ -o $@ $(CFLAGS)
 
-.PHONY: clean
+# Compile the test executable
+$(TEST_EXEC): $(TEST_OBJ)
+	$(CC) $^ -o $@ $(CFLAGS)
+
+# Compile the results folder
+$(RESULTS_DIR):
+	mkdir -p $(RESULTS_DIR)
+
+# Generic rule to compile object files for both main program and tests
+%.o: %.c
+	$(CC) -c $< -o $@ $(CFLAGS)
+
+# Clean up generated files
 clean:
-	@-rm -r $(BLD_DIR)
-	@-rm $(PROGRAM)
+	rm -rf $(MAIN_OBJ) $(TEST_OBJ) $(MAIN_EXEC) $(TEST_EXEC) $(RESULTS_DIR)
+
+.PHONY: all clean
