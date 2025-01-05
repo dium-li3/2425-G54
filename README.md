@@ -1,5 +1,5 @@
 # Laboratórios de Informática III (2024/2025)
 
-* Nome Completo Aluno 1 - A103998 - PedroTe010
-* Nome Completo Aluno 2 - A104260 - diogo7fernandes
-* Nome Completo Aluno 3 - A104168 - rafafernandes888
+Pedro Teixeira - A103998 - PedroTe010
+Diogo Fernandes - A104260 - diogo7fernandes
+Jorge Rafael Fernandes - A104168 - rafafernandes888
