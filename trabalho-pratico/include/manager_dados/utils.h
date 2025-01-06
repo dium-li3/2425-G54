@@ -58,8 +58,6 @@ void update_DiscographyTime(ARTISTS_CATALOG catalogo_artists, MUSIC music);
 
 gint sort_GeneroMusical(gconstpointer a, gconstpointer b);
 
-void increment_likes_for_genre(STATS *stats, int user_age, char *genre);
-
 void update_statistics_for_genre(STATS *stats, MUSICS_CATALOG catalogo_musics, USER user);
 
 /*

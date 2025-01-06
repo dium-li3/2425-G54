@@ -351,32 +351,6 @@ gint sort_GeneroMusical(gconstpointer a, gconstpointer b)
     return result;
 }
 
-void increment_likes_for_genre(STATS *stats, int user_age, char *genre)
-{
-    GHashTable *age_table = g_hash_table_lookup(get_genre_age_table(stats), genre);
-
-    if (!age_table)
-    {
-        age_table = g_hash_table_new_full(g_int_hash, g_int_equal, g_free, g_free);
-        g_hash_table_insert(get_genre_age_table(stats), strdup(genre), age_table);
-    }
-
-    int *age_key = g_hash_table_lookup(age_table, &user_age);
-    if (!age_key)
-    {
-        int *new_age_key = malloc(sizeof(int));
-        *new_age_key = user_age;
-
-        int *likes = malloc(sizeof(int));
-        *likes = 1;
-        g_hash_table_insert(age_table, new_age_key, likes);
-    }
-    else
-    {
-        (*age_key)++;
-    }
-}
-
 void update_statistics_for_genre(STATS *stats, MUSICS_CATALOG catalogo_musics, USER user)
 {
 
