@@ -8,11 +8,13 @@
 #include "entidades/musics.h"   
 #include "entidades/users.h"
 #include "entidades/artists.h"
+#include "entidades/albums.h"
 #include "entidades/stats.h"
 
 #include "catalogos/catalogo_musics.h"
 #include "catalogos/catalogo_artists.h"
 #include "catalogos/catalogo_users.h"
+#include "catalogos/catalogo_albums.h"
 
 #include "manager_dados/utils.h"
 
@@ -41,6 +43,24 @@ int duracao_valida(char *duracao)
             return 1;
     }
     return 0;
+}
+
+int datetime_valida(char *datetime) {
+    int ano, mes, dia, horas, minutos, segundos;
+
+    if (sscanf(datetime, "%4d/%2d/%2d %2d:%2d:%2d", &ano, &mes, &dia, &horas, &minutos, &segundos) == 6) {
+        if (ano >= 1900 && ano <= 2024 && dia >= 1 && dia <= 31 && mes >= 1 && mes <= 12) {
+            if ((ano == 2024 && mes > 9) || (ano == 2024 && mes == 9 && dia > 9)) {
+                return 0;
+            }
+
+            if (horas >= 0 && horas <= 23 && minutos >= 0 && minutos <= 59 && segundos >= 0 && segundos <= 59) {
+                return 1; 
+            }
+        }
+    }
+
+    return 0; 
 }
 
 int caracter_valido(char c) {
@@ -101,13 +121,20 @@ int verifica_liked_musics(char *liked_musics, MUSICS_CATALOG catalogo_musics){
 return 1;
 }
 
-int verifa_if_is_list(char *id_artists){
+int verify_if_is_list(char *string) {
 
-    if (id_artists[0] == '[')
-        return 1;
+    if (!string || string[0] == '\0') {
+        return 0;
+    }
 
-return 0;
+    size_t length = strlen(string);
+    if (string[0] == '[' && string[length - 1] == ']') {
+        return 1; 
+    }
+
+    return 0;
 }
+
 
 int verifica_music_artist(char *artists_id, ARTISTS_CATALOG catalogo_artists){
 
@@ -126,7 +153,49 @@ int verifica_music_artist(char *artists_id, ARTISTS_CATALOG catalogo_artists){
 return 1;
 }
 
+int verifica_music_album(char *album_id, ALBUMS_CATALOG albums){
+
+    ALBUM album = get_album_by_key(albums,album_id);
+    if(!album) return 0; 
+
+return 1;
+}
+
+int validate_and_normalize_platform(char *platform) {
+    if (!platform || platform[0] == '\0') {
+        return 0; 
+    }
+
+    to_lowercase(platform);
+
+    if (strcmp(platform, "mobile") == 0 || strcmp(platform, "desktop") == 0) {
+        return 1; 
+    }
+
+    return 0; 
+}
+
+int validate_and_normalize_type(char *type) {
+    if (!type || type[0] == '\0') {
+        return 0;
+    }
+
+    to_lowercase(type);
+
+    if (strcmp(type, "individual") == 0 || strcmp(type, "group") == 0) {
+        return 1;
+    }
+
+    return 0;
+}
+
 int verifica_artista_ou_banda(char *id_constituent, char *artist_type){
+    if (!artist_type || artist_type[0] == '\0') {
+        return 0;
+    }
+
+    to_lowercase(artist_type);
+
     if (strcmp(artist_type,"individual") == 0){
         if(strcmp(id_constituent,"[]") != 0) return 0;
     }
@@ -135,7 +204,7 @@ return 1;
 
 // Funções de Validação de Entidades ///////////////////////////////////////////
 
-int valid_entity(int flag,GArray *parameters_array,ARTISTS_CATALOG catalogo_artists,MUSICS_CATALOG catalogo_musics){
+int valid_entity(int flag,GArray *parameters_array,ARTISTS_CATALOG catalogo_artists,MUSICS_CATALOG catalogo_musics, ALBUMS_CATALOG catalogo_albums){
 
     int check = 1;
 
@@ -146,32 +215,59 @@ int valid_entity(int flag,GArray *parameters_array,ARTISTS_CATALOG catalogo_arti
         char *type = strdup(g_array_index(parameters_array, char *, 6));
 
         if(strcmp(id,"id") == 0) check = 0;
+        if (validate_and_normalize_type(type) == 0) check = 0; 
+        if (verify_if_is_list(id_constituent) == 0) check = 0;
         if (verifica_artista_ou_banda(id_constituent,type) == 0) check = 0;
 
         free(id);
         free(id_constituent);
         free(type);
     }
-    else if(flag == 2) //MUSIC
+    else if (flag == 2) //ALBUM
     {
-        char *duration = strdup(g_array_index(parameters_array, char *, 3));
-        char *year = strdup(g_array_index(parameters_array, char *, 5));
+        char *id = strdup(g_array_index(parameters_array, char *, 0));
+        char *artist_id = strdup(g_array_index(parameters_array, char *, 2));
+        char *year = strdup(g_array_index(parameters_array, char *, 3));
+        char *producers = strdup(g_array_index(parameters_array, char *, 4));
+
+        if(strcmp(id,"id") == 0) 
+            check = 0;
+        if (verify_if_is_list(artist_id) == 0) 
+            check = 0;
+        if (verify_if_is_list(producers) == 0) 
+            check = 0;
+        if (atoi(year) > 2024) 
+            check = 0; 
+
+        free(id);
+        free(artist_id);
+        free(year);
+        free(producers);
+    }
+    else if(flag == 3) //MUSIC
+    {
+        char *album_id = strdup(g_array_index(parameters_array, char *, 3));
+        char *duration = strdup(g_array_index(parameters_array, char *, 4));
+        char *year = strdup(g_array_index(parameters_array, char *, 6));
         char *artist_ids = strdup(g_array_index(parameters_array, char *, 2));
 
         if(duracao_valida(duration) == 0)
             check = 0;
         if (atoi(year) > 2024) 
             check = 0; 
-        if (verifa_if_is_list(artist_ids) == 0)
+        if (verify_if_is_list(artist_ids) == 0)
             check = 0;
-        else if (verifica_music_artist(artist_ids, catalogo_artists) == 0)
+        if (verifica_music_artist(artist_ids, catalogo_artists) == 0) 
+            check = 0;
+        if (verifica_music_album(album_id, catalogo_albums) == 0) 
             check = 0;
 
+        free(album_id);
         free(duration);
         free(year);
         free(artist_ids);
     }
-    else if(flag == 3) // USER
+    else if(flag == 4) // USER
     {
         char *birth_date = strdup(g_array_index(parameters_array, char *, 4));
         char *email = strdup(g_array_index(parameters_array, char *, 1));
@@ -184,13 +280,36 @@ int valid_entity(int flag,GArray *parameters_array,ARTISTS_CATALOG catalogo_arti
             check = 0;
         if (verifica_subscription_type(subscription_type) == 0)
             check = 0;
+        if (verify_if_is_list(liked_musics) == 0) 
+            check = 0;
         if (verifica_liked_musics(liked_musics,catalogo_musics) == 0)
             check = 0;
-
+        
         free(email);
         free(birth_date);
         free(subscription_type);
         free(liked_musics);
+    }
+    else if (flag == 5) //HISTORY
+    {
+        char *id = strdup(g_array_index(parameters_array, char *, 0));
+        char *timestamp = strdup(g_array_index(parameters_array, char *, 3));
+        char *duration = strdup(g_array_index(parameters_array, char *, 4));
+        char *platform = strdup(g_array_index(parameters_array, char *, 5)); 
+
+        if(strcmp(id,"id") == 0) 
+            check = 0;
+        if (duracao_valida(duration) == 0)
+            check = 0;
+        if (validate_and_normalize_platform(platform) == 0)
+            check = 0;
+        if (datetime_valida(timestamp) == 0)
+            check = 0;
+        
+        free(id);
+        free(timestamp);
+        free(duration);
+        free(platform);
     }
     else return 0;
 

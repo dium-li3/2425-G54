@@ -15,21 +15,23 @@ ARTIST criar_artist(void);
 // Getter functions
 char* getArtistId(ARTIST artist);
 char* getArtistName(ARTIST artist);
-char* getArtistDescription(ARTIST artist);
-char* getRecipePerStream(ARTIST artist);
-char* getIdConstituent(ARTIST artist);
+double getRecipePerStream(ARTIST artist);
+GArray* getIdConstituents(ARTIST artist);
 char* getArtistCountry(ARTIST artist);
 char* getArtistType(ARTIST artist);
 int getDiscographyDuration(ARTIST artist);
+int getIndividualAlbuns(ARTIST artist);
+double getArtistRecipe(ARTIST artist);
 
 void setArtistId(ARTIST artist, char *id);
 void setArtistName(ARTIST artist, char *name);
-void setArtistDescription(ARTIST artist, char *description);
 void setRecipePerStream(ARTIST artist, char *recipe_per_stream);
-void setIdConstituent(ARTIST artist, char *id_constituent);
+void setArtistIdConstituents(ARTIST artist, char *id_constituents_str);
 void setArtistCountry(ARTIST artist, char *country);
 void setArtistType(ARTIST artist, char *type);
 void setDiscographyDuration(ARTIST artist, int duration);
+void setIndividualAlbuns(ARTIST artist);
+void setArtistRecipe(ARTIST artist, double recipe);
 
 void destroi_artists(gpointer data);
 

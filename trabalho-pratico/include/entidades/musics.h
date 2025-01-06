@@ -16,20 +16,18 @@ typedef struct music *MUSIC;
 MUSIC criar_music(void);
 
 char* getId(MUSIC music);
-char* getTitle(MUSIC music);
-char* getArtistIds(MUSIC music);
-char* getDuration(MUSIC music);
+GArray *getArtistIds(MUSIC music);
+char* getAlbumId(MUSIC music);
+int getDuration(MUSIC music);
 char* getGenre(MUSIC music);
 int getYear(MUSIC music);
-char* getLyrics(MUSIC music);
 
 void setId(MUSIC music, char *id);
-void setTitle(MUSIC music, char *title);
 void setArtistIds(MUSIC music, char* artist_ids);
+void setAlbumId(MUSIC music,char* album_id);
 void setDuration(MUSIC music, char *duration);
 void setGenre(MUSIC music, char *genre);
 void setYear(MUSIC music, int year);
-void setLyrics(MUSIC music, char *lyrics);
 
 void destroi_musics(gpointer data);
 

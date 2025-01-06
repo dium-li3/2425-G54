@@ -18,8 +18,12 @@ GHashTable* get_genre_age_table(STATS *stats);
 
 GArray* get_artists_array(STATS *stats);
 
+GHashTable* get_weekly_top_artists(STATS *stats);
+
 void add_artist_to_stats(STATS *stats, ARTIST artist);
 
-void print_genre_age_table(STATS *stats);
+//gint compare_listening_time(gconstpointer a, gconstpointer b);
+
+//void organize_weekly_top_artists(STATS *stats);
 
 #endif

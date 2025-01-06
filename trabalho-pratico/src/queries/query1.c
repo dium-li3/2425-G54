@@ -13,50 +13,45 @@
 #include "catalogos/catalogo_users.h"
 
 #include "manager_dados/utils.h"
+#include "manager_dados/output.h"
 
 #include "queries/query1.h"
 
-void execute_query1(int numlinha, char *arg, USERS_CATALOG users)
+void execute_query1(int numlinha, char *arg, int output_flag, USERS_CATALOG users, ARTISTS_CATALOG artists)
 {
-    //---------------------ESCREVER FICHEIRO---------------------
-    char query1_path[60];
-    char numero[10];
-    sprintf(numero, "%d", numlinha);
-    strcpy(query1_path, "resultados/command");
-    strcat(query1_path, numero);
-    strcat(query1_path, "_output.txt");
-
-    char *query1_ficheiro = strdup(query1_path);
-    FILE *ficheiro = fopen(query1_ficheiro, "w");
-    if (ficheiro == NULL)
-    {
-        perror("Erro ao abrir o arquivo de erros");
-        free(query1_ficheiro);
-    }
-    //----------------------------------------------------------
-
     USER user = get_user_by_key(users, arg);
+    ARTIST artist = get_artist_by_key(artists, arg);
 
     if (user){
 
-    char *email = getEmail(user);
-    char *first_name = getFirstName(user);
-    char *last_name = getLastName(user);
-    char *birth = getBirthDate(user);
-    int age = calculate_age(birth);
-    char *country = getCountry(user);
+        char *email = getEmail(user);
+        char *first_name = getFirstName(user);
+        char *last_name = getLastName(user);
+        int age = getAge(user);
+        char *country = getCountry(user);
 
-    fprintf(ficheiro, "%s;%s;%s;%d;%s\n", email, first_name, last_name, age, country);
+        write_query1_user_output(numlinha,output_flag,email,first_name,last_name,age,country);
 
-    free(email);
-    free(first_name);
-    free(last_name);
-    free(birth);
-    free(country);
+        free(email);
+        free(first_name);
+        free(last_name);
+        free(country);
 
     }
-    else fprintf(ficheiro,"\n");
-    
-    fclose(ficheiro);  
-    free(query1_ficheiro);
+    else if (artist){
+
+        char *name = getArtistName(artist);
+        char *type = getArtistType(artist);
+        char *country = getArtistCountry(artist);
+        int individual_albuns = getIndividualAlbuns(artist);
+        double artist_recipe = getArtistRecipe(artist);
+
+        write_query1_artist_output(numlinha,output_flag,name,type,country,individual_albuns,artist_recipe);
+
+        free(name);
+        free(type);
+        free(country);
+
+    }
+    else write_null(numlinha);
 }

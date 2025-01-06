@@ -12,6 +12,6 @@
 
 #include "manager_dados/utils.h"
 
-void execute_query1(int numlinha, char *arg, USERS_CATALOG users);
+void execute_query1(int numlinha, char *arg, int output_flag, USERS_CATALOG users, ARTISTS_CATALOG artists);
 
 #endif

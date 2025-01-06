@@ -18,13 +18,15 @@ int data_valida(char *data);
 
 int duracao_valida(char *duracao);
 
+int datetime_valida(char *datetime);
+
 int caracter_valido(char c);
 
 int dominio_valido(char *part);
 
 int verifica_email(char *email);
 
-int verifa_if_is_list(char *id_artists);
+int verify_if_is_list(char *string);
 
 int verifica_subscription_type(char *s_type);
 
@@ -32,8 +34,14 @@ int verifica_liked_musics(char *liked_musics, MUSICS_CATALOG catalogo_musics);
 
 int verifica_music_artist(char *artists_id, ARTISTS_CATALOG catalogo_artists);
 
+int verifica_music_album(char *album_id, ALBUMS_CATALOG albums);
+
+int validate_and_normalize_platform(char *platform);
+
+int validate_and_normalize_type(char *type);
+
 int verifica_artista_ou_banda(char *id_constituent, char *artist_type);
 
-int valid_entity(int flag,GArray *parameters_array,ARTISTS_CATALOG catalogo_artists,MUSICS_CATALOG catalogo_musics);
+int valid_entity(int flag,GArray *parameters_array,ARTISTS_CATALOG catalogo_artists,MUSICS_CATALOG catalogo_musics, ALBUMS_CATALOG catalogo_albums);
 
 #endif

@@ -4,15 +4,20 @@
 #include <stdlib.h>
 
 #include "entidades/users.h"
+#include "entidades/user_statistics.h"
+
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+#include <time.h>
 
 struct user {
-    char *username;
+    int username; // Alterado para int
     char *email;
     char *first_name;
     char *last_name;
-    char *birth_date;
+    int age; // Alterado para idade calculada
     char *country;
-    char *subscription_type;
     char *liked_musics;
 };
 
@@ -21,13 +26,12 @@ struct user {
 USER criar_user(void)
 {
     USER novo_user = malloc(sizeof(struct user));
-    novo_user->username = NULL;
+    novo_user->username = 0;
     novo_user->email = NULL;
     novo_user->first_name = NULL;
     novo_user->last_name = NULL;
-    novo_user->birth_date = NULL;
+    novo_user->age = 0;
     novo_user->country = NULL;
-    novo_user->subscription_type = NULL;
     novo_user->liked_musics = NULL;
 
     return novo_user;
@@ -36,7 +40,17 @@ USER criar_user(void)
 // GETTERS ///////////////////////////////////////////////////////
 
 char* getUsername(USER user) {
-    return strdup(user->username);
+    char *formatted_username = malloc(10); // Formato Uxxxxxxx (8 dígitos no máximo)
+    if (!formatted_username) {
+        perror("Erro ao alocar memória para username");
+        return NULL;
+    }
+    sprintf(formatted_username, "U%07d", user->username);
+    return formatted_username;
+}
+
+int getAge(USER user) {
+    return user->age;
 }
 
 char* getEmail(USER user) {
@@ -51,16 +65,8 @@ char* getLastName(USER user) {
     return strdup(user->last_name);
 }
 
-char* getBirthDate(USER user) {
-    return strdup(user->birth_date);
-}
-
 char* getCountry(USER user) {
     return strdup(user->country);
-}
-
-char* getSubscriptionType(USER user) {
-    return strdup(user->subscription_type);
 }
 
 char* getLikedMusics(USER user) {
@@ -70,8 +76,15 @@ char* getLikedMusics(USER user) {
 // SETTERS ///////////////////////////////////////////////////////
 
 void setUsername(USER user, char *username) {
-    free(user->username);
-    user->username = strdup(username);
+    if (username && username[0] == 'U') {
+        user->username = atoi(username + 1);
+    } else {
+        fprintf(stderr, "Formato inválido para username: %s\n", username);
+    }
+}
+
+void setAge(USER user, char *birth_date) {
+    user->age = calculate_age(birth_date);
 }
 
 void setEmail(USER user, char *email) {
@@ -89,19 +102,9 @@ void setLastName(USER user, char *last_name) {
     user->last_name = strdup(last_name);
 }
 
-void setBirthDate(USER user, char *birth_date) {
-    free(user->birth_date);
-    user->birth_date = strdup(birth_date);
-}
-
 void setCountry(USER user, char *country) {
     free(user->country);
     user->country = strdup(country);
-}
-
-void setSubscriptionType(USER user, char *subscription_type) {
-    free(user->subscription_type);
-    user->subscription_type = strdup(subscription_type);
 }
 
 void setLikedMusics(USER user, char *liked_musics) {
@@ -109,17 +112,16 @@ void setLikedMusics(USER user, char *liked_musics) {
     user->liked_musics = strdup(liked_musics);
 }
 
+// FUNCTION TO DESTROY A USER ////////////////////////////////////
+
 void destroi_users(gpointer data) {
     USER user = (USER)data;
 
-    free(user->username);
     free(user->email);
     free(user->first_name);
     free(user->last_name);
-    free(user->birth_date);
     free(user->country);
-    free(user->subscription_type);
     free(user->liked_musics);
-    
+
     free(user);
 }
