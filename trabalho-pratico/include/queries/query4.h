@@ -1,5 +1,5 @@
-#ifndef QUERY3_H
-#define QUERY3_H
+#ifndef QUERY4_H
+#define QUERY4_H
 
 #include <stdio.h>
 #include <string.h>
@@ -17,6 +17,6 @@
 
 #include "manager_dados/utils.h"
 
-void execute_query3(int numlinha, int flag, char *arg, STATS *stats);
+//void execute_query4(int numlinha, int flag, char *arg, ARTISTS_CATALOG artists, STATS *stats);
 
 #endif

@@ -1,10 +1,10 @@
-#ifndef QUERY3_H
-#define QUERY3_H
+#ifndef INTERATIVO_MODE_H
+#define INTERATIVO_MODE_H
 
 #include <stdio.h>
+#include <stdlib.h>
 #include <string.h>
 #include <glib.h>
-#include <stdlib.h>
 
 #include "entidades/musics.h"   
 #include "entidades/users.h"
@@ -16,7 +16,12 @@
 #include "catalogos/catalogo_users.h"
 
 #include "manager_dados/utils.h"
+#include "manager_dados/querier.h"
+#include "manager_dados/parser.h"
+#include "manager_dados/validation.h"
 
-void execute_query3(int numlinha, int flag, char *arg, STATS *stats);
+#include "modos_execucao/programa-principal.h"
+
+void exec_programa_interativo();
 
 #endif

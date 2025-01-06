@@ -19,11 +19,11 @@
 #include "manager_dados/utils.h"
 
 #include "modos_execucao/programa-principal.h"
+#include "modos_execucao/programa-interativo.h"
 
 int main(int argc, char **argv)
 {
-    
-       if (argc==1) {}//exec_interactive_mode(argv[1]);
+       if (argc==1) exec_programa_interativo(argv[1]);
        else
        {
            if (argc==3) exec_programa_principal(argv[1],argv[2]);
@@ -34,22 +34,10 @@ int main(int argc, char **argv)
            }
        }
     
-    /*
-    
-    struct rusage r_usage;
-    
-    char *path = "../../Dados-fase1/dataset/com_erros";
-    char *queries = "../../Dados-fase1/inputs_exemplo.txt";
+    //char *path = "../../small/dataset/com_erros";
+    //char *queries = "../../small/inputs-small.txt";
 
-    exec_programa_principal(path, queries);
-
-    getrusage(RUSAGE_SELF, &r_usage);
-    printf("Memory usage: %ld KB\n", r_usage.ru_maxrss);
-    
-    */
 
     return 0;
-
-    
-    
+     
 }

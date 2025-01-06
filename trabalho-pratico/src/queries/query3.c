@@ -14,28 +14,12 @@
 #include "catalogos/catalogo_users.h"
 
 #include "manager_dados/utils.h"
+#include "manager_dados/output.h"
 
 #include "queries/query3.h"
 
-void execute_query3(int numlinha, char *arg, STATS *stats)
+void execute_query3(int numlinha, int flag, char *arg, STATS *stats)
 {
-    //---------------------ESCREVER FICHEIRO---------------------
-    char query3_path[60];
-    char numero[10];
-    sprintf(numero, "%d", numlinha);
-    strcpy(query3_path, "resultados/command");
-    strcat(query3_path, numero);
-    strcat(query3_path, "_output.txt");
-
-    char *query3_ficheiro = strdup(query3_path);
-    FILE *ficheiro = fopen(query3_ficheiro, "w");
-    if (ficheiro == NULL)
-    {
-        perror("Erro ao abrir o arquivo de erros");
-        free(query3_ficheiro);
-    }
-    //----------------------------------------------------------
-
     //---------------------BUSCA DE ARGUMENTOS------------------
     char *min_age, *max_age;
     min_age = strsep(&arg, " ");
@@ -48,8 +32,6 @@ void execute_query3(int numlinha, char *arg, STATS *stats)
     GHashTable *genre_age_table = get_genre_age_table(stats);
     if (!genre_age_table) {
         printf("No data in genre_age_table.\n");
-        fclose(ficheiro);
-        free(query3_ficheiro);
         return;
     }
 
@@ -83,7 +65,7 @@ void execute_query3(int numlinha, char *arg, STATS *stats)
     g_array_sort(generos_musicais_array, sort_GeneroMusical);
 
     if (generos_musicais_array->len == 0) {
-        fprintf(ficheiro,"\n");
+        write_null(numlinha);
     }
 
     for (int i = 0; i < generos_musicais_array->len; i++)
@@ -93,13 +75,10 @@ void execute_query3(int numlinha, char *arg, STATS *stats)
             char *nomeGenero = getGeneroNome(genero);
             int likesGenero = getGeneroLikes(genero);
 
-            fprintf(ficheiro, "%s;%d\n",nomeGenero,likesGenero);
+            write_query3_output(numlinha,flag,nomeGenero,likesGenero);
 
             free(nomeGenero);
         }
-
-    fclose(ficheiro);  
-    free(query3_ficheiro);
 
     for (guint i = 0; i < generos_musicais_array->len; i++) {
         GENERO_MUSICAL genero = g_array_index(generos_musicais_array, GENERO_MUSICAL, i);
