@@ -18,7 +18,7 @@ char* getFirstName(USER user);
 char* getLastName(USER user);
 int getAge(USER user);
 char* getCountry(USER user);
-char* getLikedMusics(USER user);
+GArray *getLikedMusics(USER user);
 //GHashTable* getYearlyStatistics(USER user);
 //USER_STATISTICS get_user_statistics_by_year(USER user, int year);
 

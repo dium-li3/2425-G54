@@ -12,13 +12,13 @@
 #include <time.h>
 
 struct user {
-    int username; // Alterado para int
+    int username;
     char *email;
     char *first_name;
     char *last_name;
-    int age; // Alterado para idade calculada
+    int age; 
     char *country;
-    char *liked_musics;
+    GArray *liked_musics;
 };
 
 // FUNCTION TO CREATE AN EMPTY USER //////////////////////////////
@@ -32,7 +32,7 @@ USER criar_user(void)
     novo_user->last_name = NULL;
     novo_user->age = 0;
     novo_user->country = NULL;
-    novo_user->liked_musics = NULL;
+    novo_user->liked_musics = g_array_new(FALSE, FALSE, sizeof(int));;
 
     return novo_user;
 }
@@ -69,8 +69,21 @@ char* getCountry(USER user) {
     return strdup(user->country);
 }
 
-char* getLikedMusics(USER user) {
-    return strdup(user->liked_musics);
+GArray *getLikedMusics(USER user) {
+    if (!user->liked_musics || user->liked_musics->len == 0) {
+        return g_array_new(FALSE, FALSE, sizeof(char *));
+    }
+
+    GArray *liked_musics_array = g_array_new(FALSE, FALSE, sizeof(char *));
+
+    for (guint i = 0; i < user->liked_musics->len; i++) {
+        int music_id = g_array_index(user->liked_musics, int, i);
+        char *formatted_music_id = malloc(10);
+        sprintf(formatted_music_id, "S%07d", music_id); 
+        g_array_append_val(liked_musics_array, formatted_music_id);
+    }
+
+    return liked_musics_array; 
 }
 
 // SETTERS ///////////////////////////////////////////////////////
@@ -108,8 +121,22 @@ void setCountry(USER user, char *country) {
 }
 
 void setLikedMusics(USER user, char *liked_musics) {
-    free(user->liked_musics);
-    user->liked_musics = strdup(liked_musics);
+    g_array_set_size(user->liked_musics, 0); 
+
+    char *liked_musics_copy = strdup(liked_musics);
+    format_string(liked_musics_copy);
+
+    GString *copy_of_liked_musics = g_string_new(liked_musics_copy);
+    gchar **tokens = g_strsplit(copy_of_liked_musics->str, ",", -1);
+
+    for (int i = 0; tokens[i] != NULL; i++) {
+        int artist_id = atoi(tokens[i] + 1); 
+        g_array_append_val(user->liked_musics, artist_id);
+    }
+
+    g_string_free(copy_of_liked_musics, TRUE);
+    g_strfreev(tokens);
+    free(liked_musics_copy);
 }
 
 // FUNCTION TO DESTROY A USER ////////////////////////////////////
@@ -121,7 +148,7 @@ void destroi_users(gpointer data) {
     free(user->first_name);
     free(user->last_name);
     free(user->country);
-    free(user->liked_musics);
+    g_array_free(user->liked_musics,TRUE);
 
     free(user);
 }

@@ -353,23 +353,17 @@ gint sort_GeneroMusical(gconstpointer a, gconstpointer b)
 
 void update_statistics_for_genre(STATS *stats, MUSICS_CATALOG catalogo_musics, USER user)
 {
-
-    char *liked_musics = getLikedMusics(user);
-
-    if (!liked_musics || strlen(liked_musics) == 0)
-    {
+    GArray *liked_musics = getLikedMusics(user);
+    if (!liked_musics || liked_musics->len == 0) {
         return;
     }
 
     int age = getAge(user);
 
-    format_string(liked_musics);
-    GString *copy_of_line = g_string_new(liked_musics);
-    gchar **tokens = g_strsplit(copy_of_line->str, ",", -1);
+    for (guint i = 0; i < liked_musics->len; i++){
+        char *music_id = g_array_index(liked_musics, char *, i);
 
-    for (int i = 0; tokens[i] != NULL; i++)
-    {
-        MUSIC music = get_music_by_key(catalogo_musics, tokens[i]);
+        MUSIC music = get_music_by_key(catalogo_musics, music_id);
         char *musicGenre = getGenre(music);
 
         if (music && musicGenre)
@@ -377,12 +371,11 @@ void update_statistics_for_genre(STATS *stats, MUSICS_CATALOG catalogo_musics, U
             increment_likes_for_genre(stats, age, musicGenre);
         }
 
+        free(music_id);
         free(musicGenre);
     }
 
-    g_string_free(copy_of_line, TRUE);
-    g_strfreev(tokens);
-    free(liked_musics);
+    g_array_free(liked_musics,TRUE);
 }
 
 /////////////////////////////////////////////////////////////////////////////////////////////////////////////

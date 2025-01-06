@@ -116,7 +116,7 @@ void setYear(MUSIC music, int year) {
 void destroi_musics(gpointer data) {
     MUSIC music = (MUSIC)data;
 
-    g_array_unref(music->artist_ids); 
+    g_array_free(music->artist_ids, TRUE); 
     free(music->genre);
 
     free(music);
