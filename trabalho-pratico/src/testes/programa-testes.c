@@ -7,11 +7,13 @@
 #include "entidades/musics.h"   
 #include "entidades/users.h"
 #include "entidades/artists.h"
+#include "entidades/albums.h"
 #include "entidades/stats.h"
 
 #include "catalogos/catalogo_musics.h"
 #include "catalogos/catalogo_artists.h"
 #include "catalogos/catalogo_users.h"
+#include "catalogos/catalogo_albums.h"
 
 #include "manager_dados/parser.h"
 #include "manager_dados/querier.h"
@@ -21,10 +23,12 @@
 #include "queries/query1.h"
 #include "queries/query2.h"
 #include "queries/query3.h"
+#include "queries/query4.h"
+#include "queries/query6.h"
 
 #include "testes/query_results.h"
 
-#define MAX_QUERIES 3
+#define MAX_QUERIES 6
 
 FILE *open_csv_file_tests(const char *path, const char *filename, char **full_path){
     size_t size = strlen(path) + strlen(filename) + 2;
@@ -116,8 +120,7 @@ void compare_results(char *expected_outputs, int count, int *correct, int *missi
     fclose(output);
 }
 
-void exec_test_line(ARTISTS_CATALOG artists, MUSICS_CATALOG musics, USERS_CATALOG users, STATS *stats, char *linha, int count, char *expected_outputs, QUERYRESULTS queries_results[]){
-
+void exec_test_line(ARTISTS_CATALOG artists, MUSICS_CATALOG musics, USERS_CATALOG users, ALBUMS_CATALOG albums, STATS *stats, char *linha, int count, char *expected_outputs, QUERYRESULTS queries_results[]){
         linha[strcspn(linha, "\n")] = '\0';
         char *query, *args;
         query = strsep(&linha, " ");
@@ -131,21 +134,68 @@ void exec_test_line(ARTISTS_CATALOG artists, MUSICS_CATALOG musics, USERS_CATALO
         if(strcmp(query, "1") == 0)
         {
             start = clock();
-            execute_query1(count, args, users);
+            execute_query1(count, args, 1, users, artists);
+            end = clock();
+        }
+        else if(strcmp(query, "1S") == 0)
+        {
+            start = clock();
+            execute_query1(count, args, 2, users, artists);
             end = clock();
         }
         else if(strcmp(query, "2") == 0)
         {
             start = clock();
-            execute_query2(count, args, stats);
+            execute_query2(count, 1, args, stats);
+            end = clock();
+        }
+        else if(strcmp(query, "2S") == 0)
+        {
+            start = clock();
+            execute_query2(count, 2, args, stats);
             end = clock();
         }
         else if(strcmp(query, "3") == 0)
         {
             start = clock();
-            execute_query3(count, args, stats);
+            execute_query3(count, 1, args, stats);
             end = clock();
         }
+        else if(strcmp(query, "3S") == 0)
+        {
+            start = clock();
+            execute_query3(count, 2, args, stats);
+            end = clock();
+        }
+        else{
+            return;
+        }
+        /*
+        else if(strcmp(query, "4") == 0)
+        {
+            start = clock();
+            execute_query4(count, 1, args,  artists, stats);
+            end = clock();
+        }
+        else if(strcmp(query, "4S") == 0)
+        {
+            start = clock();
+            execute_query4(count, 2, args, artists, stats);
+            end = clock();
+        }
+        else if(strcmp(query, "6") == 0)
+        {
+            start = clock();
+            execute_query6(count, 1, args,  users);
+            end = clock();
+        }
+        else if(strcmp(query, "6S") == 0)
+        {
+            start = clock();
+            execute_query6(count, 2, args, users);
+            end = clock();
+        }
+        */
 
         int correct = 1, missing_line = -2, missing_query = 0;
         compare_results(expected_outputs, count, &correct, &missing_line, &missing_query);
@@ -158,13 +208,13 @@ void exec_test_line(ARTISTS_CATALOG artists, MUSICS_CATALOG musics, USERS_CATALO
         
 }
 
-void test_querier(ARTISTS_CATALOG artists, MUSICS_CATALOG musics, USERS_CATALOG users, STATS *stats, FILE *input, char *expected_outputs, QUERYRESULTS queries_results[]){
+void test_querier(ARTISTS_CATALOG artists, MUSICS_CATALOG musics, USERS_CATALOG users, ALBUMS_CATALOG albums, STATS *stats, FILE *input, char *expected_outputs, QUERYRESULTS queries_results[]){
     int count = 1;
     char linha[1024];
 
     while (fgets(linha, sizeof(linha), input) != NULL) 
     {
-        exec_test_line(artists, musics, users, stats, linha, count, expected_outputs, queries_results);
+        exec_test_line(artists, musics, users, albums, stats, linha, count, expected_outputs, queries_results);
         count++;
     }
 }
@@ -177,18 +227,24 @@ int main(int argc, char **argv)
     ARTISTS_CATALOG artists_hashtable = create_artists_catalog();
     MUSICS_CATALOG musics_hashtable = create_musics_catalog(); 
     USERS_CATALOG users_hashtable = create_users_catalog();
+    ALBUMS_CATALOG album_hashtable = create_albums_catalog();
     STATS *stats = create_statistics();
 
-    char *artists_path, *musics_path, *users_path;
+    char *artists_path, *albums_path, *musics_path, *users_path, *history_path;
     FILE *artists_file = open_csv_file_tests(argv[1], "artists.csv", &artists_path);
+    FILE *albums_file = open_csv_file_tests(argv[1], "albums.csv", &albums_path);
     FILE *musics_file = open_csv_file_tests(argv[1], "musics.csv", &musics_path);
     FILE *users_file = open_csv_file_tests(argv[1], "users.csv", &users_path);
+    FILE *history_file = open_csv_file_tests(argv[1], "history.csv", &history_path);
 
-    if (!artists_file || !musics_file || !users_file) {
+    if (!artists_file || !albums_file || !musics_file || !users_file || !history_file) {
         free(artists_path);
+        free(albums_path);
         free(musics_path);
         free(users_path);
+        free(history_path);
         free_artists_catalog(artists_hashtable);
+        free_albums_catalog(album_hashtable);
         free_musics_catalog(musics_hashtable);
         free_user_catalog(users_hashtable);
         free_statistics(stats);
@@ -199,12 +255,17 @@ int main(int argc, char **argv)
     if (qs == NULL) {
         perror("Failed to open commands file");
         fclose(artists_file);
+        fclose(albums_file);
         fclose(musics_file);
         fclose(users_file);
+        fclose(history_file);
         free(artists_path);
+        free(albums_path);
         free(musics_path);
         free(users_path);
+        free(history_path);
         free_artists_catalog(artists_hashtable);
+        free_albums_catalog(album_hashtable);
         free_musics_catalog(musics_hashtable);
         free_user_catalog(users_hashtable);
         free_statistics(stats);
@@ -229,17 +290,19 @@ int main(int argc, char **argv)
         double time;
 
         init_parser = clock();
-
-        parser(artists_hashtable, musics_hashtable, users_hashtable, stats, artists_file, musics_file, users_file);
+        
+        parser(artists_hashtable, musics_hashtable, users_hashtable, album_hashtable, stats, artists_file, musics_file, users_file, history_file, albums_file);
 
         finit_parser = clock();
+
+        //organize_weekly_top_artists(stats);
         
         time = ((double)(finit_parser - init_parser)) / CLOCKS_PER_SEC;
         parser_time = time;
 
         init_queries = clock();
 
-        test_querier(artists_hashtable, musics_hashtable, users_hashtable, stats, qs, argv[3], queries_results);
+        test_querier(artists_hashtable,musics_hashtable,users_hashtable,album_hashtable,stats, qs, argv[3], queries_results);
 
         finit_queries = clock();
         time = ((double)(finit_queries - init_queries)) / CLOCKS_PER_SEC;
@@ -257,6 +320,7 @@ int main(int argc, char **argv)
         free_artists_catalog(artists_hashtable);
         free_musics_catalog(musics_hashtable);
         free_user_catalog(users_hashtable);
+        free_albums_catalog(album_hashtable);
         free_statistics(stats);
 
     finit_program = clock();

@@ -13,28 +13,31 @@
 #include "catalogos/catalogo_users.h"
 
 #include "manager_dados/utils.h"
+#include "manager_dados/output.h"
 
 #include "queries/query2.h"
 
-void execute_query2(int numlinha, char *arg, STATS *stats)
-{
-    //---------------------ESCREVER FICHEIRO---------------------
-    char query2_path[60];
-    char numero[10];
-    sprintf(numero, "%d", numlinha);
-    strcpy(query2_path, "resultados/command");
-    strcat(query2_path, numero);
-    strcat(query2_path, "_output.txt");
+int process_artist(int numlinha, int flag, ARTIST artist, char *country_filter) {
+    char *artistName = getArtistName(artist);
+    char *artistType = getArtistType(artist);
+    char *duration = convert_seconds_to_duration(getDiscographyDuration(artist));
+    char *artistCountry = getArtistCountry(artist);
 
-    char *query2_ficheiro = strdup(query2_path);
-    FILE *ficheiro = fopen(query2_ficheiro, "w");
-    if (ficheiro == NULL)
-    {
-        perror("Erro ao abrir o arquivo de erros");
-        free(query2_ficheiro);
+    int is_match = (country_filter == NULL || strcmp(artistCountry, country_filter) == 0);
+
+    if (is_match) {
+        write_query2_output(numlinha, flag, artistName, artistType, duration, artistCountry);
     }
-    //----------------------------------------------------------
 
+    free(artistName);
+    free(artistType);
+    free(duration);
+    free(artistCountry);
+
+    return is_match;
+}
+
+void execute_query2(int numlinha, int flag, char *arg, STATS *stats) {
     //---------------------BUSCA DE ARGUMENTOS------------------
     char *number_of_artists, *country;
     number_of_artists = strsep(&arg, " ");
@@ -44,61 +47,25 @@ void execute_query2(int numlinha, char *arg, STATS *stats)
     //----------------------------------------------------------
 
     GArray *list_artists = get_artists_array(stats);
-    
     g_array_sort(list_artists, sort_DiscographyTime);
 
-    if (list_artists->len == 0 || number == 0){
-        fprintf(ficheiro,"\n");
+    if (list_artists->len == 0 || number == 0) {
+        write_null(numlinha);
+        g_array_free(list_artists, TRUE);
+        return;
     }
 
-    if (strcmp(country,"") == 0)
-    {
-        for (int i = 0; i < number; i++)
-        {
-            ARTIST artist = g_array_index(list_artists, ARTIST, i);
+    // Filter and process artists
+    char *country_filter = (strcmp(country, "") == 0) ? NULL : country;
+    if (country_filter) removeQuotes(country_filter);
 
-            char *artistName = getArtistName(artist);
-            char *artistType = getArtistType(artist);
-            char *duration = convert_seconds_to_duration(getDiscographyDuration(artist));
-            char *artistCountry = getArtistCountry(artist);
-
-            fprintf(ficheiro, "%s;%s;%s;%s\n", artistName, artistType, duration, artistCountry);
-
-            free(artistName);
-            free(artistType);
-            free(duration);
-            free(artistCountry);
+    int count = 0;
+    for (int i = 0; i < list_artists->len && count < number; i++) {
+        ARTIST artist = g_array_index(list_artists, ARTIST, i);
+        if (process_artist(numlinha, flag, artist, country_filter)) {
+            count++;
         }
     }
-    else
-    {
-        removeQuotes(country);
-        int count_artists = 0;
-        for (int i = 0; i < list_artists->len; i++)
-        {
-            ARTIST artist = g_array_index(list_artists, ARTIST, i);
-
-            char *artistName = getArtistName(artist);
-            char *artistType = getArtistType(artist);
-            char *duration = convert_seconds_to_duration(getDiscographyDuration(artist));
-            char *artistCountry = getArtistCountry(artist);
-
-            if(strcmp(artistCountry,country)==0){
-                fprintf(ficheiro, "%s;%s;%s;%s\n", artistName, artistType, duration, artistCountry);
-                count_artists++;
-            }
-
-            free(artistName);
-            free(artistType);
-            free(duration);
-            free(artistCountry);
-
-            if (count_artists>=number) break;
-        }
-    }
-    
-    fclose(ficheiro);  
-    free(query2_ficheiro);
 
     g_array_free(list_artists, TRUE);
 }

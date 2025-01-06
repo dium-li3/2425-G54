@@ -27,7 +27,6 @@ void inserir_artist_catalogo(GArray *parameters_array, ARTISTS_CATALOG catalogo_
 {
     char *id = g_array_index(parameters_array, char *, 0);
     char *name = g_array_index(parameters_array, char *, 1);
-    char *description = g_array_index(parameters_array, char *, 2);
     char *recipe_per_stream = g_array_index(parameters_array, char *, 3);
     char *id_constituent = g_array_index(parameters_array, char *, 4);
     char *country = g_array_index(parameters_array, char *, 5);
@@ -37,9 +36,8 @@ void inserir_artist_catalogo(GArray *parameters_array, ARTISTS_CATALOG catalogo_
 
     setArtistId(artist, id);
     setArtistName(artist, name);
-    setArtistDescription(artist, description);
     setRecipePerStream(artist, recipe_per_stream);
-    setIdConstituent(artist, id_constituent);
+    setArtistIdConstituents(artist, id_constituent);
     setArtistCountry(artist, country);
     setArtistType(artist, type);
 

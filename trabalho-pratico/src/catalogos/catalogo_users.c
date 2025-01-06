@@ -29,7 +29,6 @@ void inserir_user_catalogo(GArray *parameters_array, USERS_CATALOG catalogo_user
     char *last_name = g_array_index(parameters_array, char *, 3);
     char *birth_date = g_array_index(parameters_array, char *, 4);
     char *country = g_array_index(parameters_array, char *, 5);
-    char *subscription_type = g_array_index(parameters_array, char *, 6);
     char *liked_musics = g_array_index(parameters_array, char *, 7);
 
     USER user = criar_user();
@@ -38,9 +37,8 @@ void inserir_user_catalogo(GArray *parameters_array, USERS_CATALOG catalogo_user
     setEmail(user, email);
     setFirstName(user, first_name);
     setLastName(user, last_name);
-    setBirthDate(user, birth_date);
+    setAge(user, birth_date);
     setCountry(user, country);
-    setSubscriptionType(user, subscription_type);
     setLikedMusics(user, liked_musics);
 
     insert_user(catalogo_users, user, username);

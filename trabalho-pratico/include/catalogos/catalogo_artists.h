@@ -3,6 +3,7 @@
 
 #include <glib.h>
 #include <entidades/artists.h>
+#include <entidades/stats.h>
 #include "manager_dados/utils.h"
 
 typedef struct artists_catalog *ARTISTS_CATALOG;
