@@ -20,8 +20,6 @@
 #include "queries/query1.h"
 #include "queries/query2.h"
 #include "queries/query3.h"
-#include "queries/query4.h"
-#include "queries/query6.h"
 
 void querier(ARTISTS_CATALOG artists, MUSICS_CATALOG musics, USERS_CATALOG users, ALBUMS_CATALOG albums, STATS *stats, FILE *input)
 {
@@ -67,23 +65,5 @@ void exec_line(ARTISTS_CATALOG artists, MUSICS_CATALOG musics, USERS_CATALOG use
         }
         else{
         }
-        /*
-        else if(strcmp(query, "4") == 0)
-        {
-            execute_query4(count, 1, args,  artists, stats);
-        }
-        else if(strcmp(query, "4S") == 0)
-        {
-            execute_query4(count, 2, args, artists, stats);
-        }
-        else if(strcmp(query, "6") == 0)
-        {
-            execute_query6(count, 1, args, users);
-        }
-        else if(strcmp(query, "6S") == 0)
-        {
-            execute_query6(count, 2, args, users);
-        }
-        */
   
 }

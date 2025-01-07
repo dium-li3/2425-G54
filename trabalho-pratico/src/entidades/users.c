@@ -4,7 +4,8 @@
 #include <stdlib.h>
 
 #include "entidades/users.h"
-#include "entidades/user_statistics.h"
+
+#include "manager_dados/utils.h"
 
 #include <stdio.h>
 #include <stdlib.h>
@@ -40,7 +41,7 @@ USER criar_user(void)
 // GETTERS ///////////////////////////////////////////////////////
 
 char* getUsername(USER user) {
-    char *formatted_username = malloc(10); // Formato Uxxxxxxx (8 dígitos no máximo)
+    char *formatted_username = malloc(10);
     if (!formatted_username) {
         perror("Erro ao alocar memória para username");
         return NULL;

@@ -72,38 +72,3 @@ void write_query3_output(int numlinha,int output_flag,char *nomeGenero, int like
 
     fclose(output);
 }
-/*
-void write_query4_output(int numlinha, int output_flag, char *name, char *type, int count_top_10) {
-    FILE *output = open_output_file(numlinha);
-    if (!output) return;
-
-    if (output_flag == 1) {
-        fprintf(output, "%s;%s;%d\n", name, type, count_top_10);
-    } else {
-        fprintf(output, "%s=%s=%d\n", name, type, count_top_10);
-    }
-
-    fclose(output);
-}
-
-void write_query6_output(int numlinha, int output_flag, char *duration, int unique_musics, char* fav_artist, char* date, char* genre, char* album, char* hour, GArray *top_artists) {
-    FILE *output = open_output_file(numlinha);
-    if (!output) return;
-
-    if (output_flag == 1) {
-        fprintf(output, "%s;%d;%s;%s;%s;%s;%s\n", duration, unique_musics, fav_artist, date, genre, album, hour);
-
-    } else {
-        fprintf(output, "%s=%d=%s=%s=%s=%s=%s\n", duration, unique_musics, fav_artist, date, genre, album, hour);
-    }
-
-    if (top_artists && top_artists->len > 0) {
-        for (guint i = 0; i < top_artists->len; i++) {
-            char *artist_entry = g_array_index(top_artists, char*, i);
-                fprintf(output, "%s\n", artist_entry);
-        }
-    }
-
-    fclose(output);
-}
-*/

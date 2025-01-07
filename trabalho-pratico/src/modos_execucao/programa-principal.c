@@ -79,8 +79,6 @@ if (qs == NULL) perror("Falha");
 
 parser(artists_hashtable, musics_hashtable, users_hashtable, album_hashtable, stats, artists_file, musics_file, users_file, history_file, albums_file);
 
-//organize_weekly_top_artists(stats);
-
 querier(artists_hashtable,musics_hashtable,users_hashtable,album_hashtable,stats,qs);
 
 fclose(artists_file);

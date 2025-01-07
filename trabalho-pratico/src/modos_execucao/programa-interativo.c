@@ -31,9 +31,6 @@ void print_menu() {
     printf("1. Executar Query 1\n");
     printf("2. Executar Query 2\n");
     printf("3. Executar Query 3\n");
-    //printf("4. Executar Query 4\n");
-    //printf("5. Executar Query 5\n");
-    //printf("6. Executar Query 6\n");
     printf("0. Sair\n");
     printf("==================================\n");
     printf("Escolhe uma opção: ");
@@ -69,7 +66,7 @@ int num_pedidos = 1;
 clear_terminal();
 
 char path[256];
-printf("Insira o caminho para o dataset (ou pressione Enter para escolher o default '../../small/dataset/com_erros'):");
+printf("Insira o caminho para o dataset (ou pressione Enter para escolher o default '../../fase2-small/small/dataset/com_erros'):");
 if (fgets(path, sizeof(path), stdin) == NULL) {
     perror("Falha ao ler input");
     exit(EXIT_FAILURE);
@@ -78,7 +75,7 @@ if (fgets(path, sizeof(path), stdin) == NULL) {
 path[strcspn(path, "\n")] = 0;
 
 if (strlen(path) == 0) {
-    strcpy(path, "../../small/dataset/com_erros");
+    strcpy(path, "../../fase2-small/small/dataset/com_erros");
 }
 
 if (access(path, F_OK) != 0) {

@@ -23,12 +23,10 @@
 #include "queries/query1.h"
 #include "queries/query2.h"
 #include "queries/query3.h"
-#include "queries/query4.h"
-#include "queries/query6.h"
 
 #include "testes/query_results.h"
 
-#define MAX_QUERIES 6
+#define MAX_QUERIES 3
 
 FILE *open_csv_file_tests(const char *path, const char *filename, char **full_path){
     size_t size = strlen(path) + strlen(filename) + 2;
@@ -170,32 +168,6 @@ void exec_test_line(ARTISTS_CATALOG artists, MUSICS_CATALOG musics, USERS_CATALO
         else{
             return;
         }
-        /*
-        else if(strcmp(query, "4") == 0)
-        {
-            start = clock();
-            execute_query4(count, 1, args,  artists, stats);
-            end = clock();
-        }
-        else if(strcmp(query, "4S") == 0)
-        {
-            start = clock();
-            execute_query4(count, 2, args, artists, stats);
-            end = clock();
-        }
-        else if(strcmp(query, "6") == 0)
-        {
-            start = clock();
-            execute_query6(count, 1, args,  users);
-            end = clock();
-        }
-        else if(strcmp(query, "6S") == 0)
-        {
-            start = clock();
-            execute_query6(count, 2, args, users);
-            end = clock();
-        }
-        */
 
         int correct = 1, missing_line = -2, missing_query = 0;
         compare_results(expected_outputs, count, &correct, &missing_line, &missing_query);
@@ -294,8 +266,6 @@ int main(int argc, char **argv)
         parser(artists_hashtable, musics_hashtable, users_hashtable, album_hashtable, stats, artists_file, musics_file, users_file, history_file, albums_file);
 
         finit_parser = clock();
-
-        //organize_weekly_top_artists(stats);
         
         time = ((double)(finit_parser - init_parser)) / CLOCKS_PER_SEC;
         parser_time = time;
